@@ -1,7 +1,5 @@
 # kubernetes-for-china
 
- - 当前在 Ubuntu 18.04 (With Kubernetes v1.13.0) 经过测试可用
-
 ## 安装 `Kubernetes`
 
 1. [安装Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
@@ -39,7 +37,7 @@ $ sudo swapoff -a
 # 永久关闭需要编辑 `/etc/fstab` 注释掉 `swap` 所在行
 
 # 可以用下面的命令列出 kubeadm 需要的 images
-$ kubeadm config images list --kubernetes-version=v1.13.0
+$ kubeadm config images list --kubernetes-version=v1.13.2
 
 # 集群初始化（init.yml文件中配置了使用阿里的镜像仓库）
 $ sudo kubeadm init --config init.yml
@@ -58,7 +56,7 @@ $ kubectl taint nodes --all node-role.kubernetes.io/master-
 
 ```bash
 # 安装
-$ curl -s https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz | tar xzv
+$ curl -s https://storage.googleapis.com/kubernetes-helm/helm-v2.12.1-linux-amd64.tar.gz | tar xzv
 $ sudo cp linux-amd64/helm /usr/local/bin
 $ rm -rf linux-amd64
 
@@ -135,29 +133,9 @@ df -h
 umount /cephfs
 ```
 
-## [OpenEBS](https://github.com/openebs/openebs)
 
+## 升级 Kubernetes 版本
 ```bash
-# OpenEBS can be setup in few easy steps. 
-# You can get going on your choice of Kubernetes cluster by having open-iscsi installed on the Kubernetes nodes and running the openebs-operator using kubectl.
-
-# Start the OpenEBS Services using Operator:
-$ kubectl apply -f https://raw.githubusercontent.com/openebs/openebs/master/k8s/openebs-operator.yaml
-
-# As an alternative to the above comment you can also use Helm package manager to install OpenEBS. 
-# More info on OpenEBS Chart: https://github.com/kubernetes/charts/tree/master/stable/openebs
-$ helm install stable/openebs
-
-# Customize or use the Default storageclasses
-$ kubectl apply -f https://raw.githubusercontent.com/openebs/openebs/master/k8s/openebs-storageclasses.yaml
-
-# List predefined OpenEBS Storage Classes
-$ kubectl get sc
-
-# set openEBS Standard Storage Class as default storageclass 
-$ kubectl patch storageclass openebs-standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-
-# Optional: Enable monitoring using Prometheus and Grafana
-$ kubectl apply -f https://raw.githubusercontent.com/openebs/openebs/master/k8s/openebs-monitoring-pg.yaml
-
+# 修改 `init.yml` 中 `kubernetesVersion` 版本号， 执行
+sudo kubeadm upgrade apply --config init.yml --ignore-preflight-errors=SystemVerification
 ```
